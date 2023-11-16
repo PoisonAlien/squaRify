@@ -52,10 +52,10 @@ Treemap in base R
 }
 \details{
 Plot treemaps in base R
-This function is a direct transpiled python \href{https://github.com/laserson/squarify}{squarify} package by \href{https://github.com/laserson}{Uri Laserson}
+This function is a direct transpilation of python \href{https://github.com/laserson/squarify}{squarify} package by \href{https://github.com/laserson}{Uri Laserson}
 }
 \examples{
-gdp <- system.file("extdata", "G7_vs_BRCIS_GDP.tsv", package = "squarify")
+gdp <- system.file("extdata", "G7_vs_BRCIS_GDP.tsv", package = "squaRify")
 gdp = read.delim(file = gdp)
 g7 = subset(gdp, consortium == "G7")
 squarify(X = g7$GDP_T, labels = g7$country)

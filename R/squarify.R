@@ -3,7 +3,6 @@
 
 # Squarified Treemap Layout
 # Implements algorithm from Bruls, Huizing, van Wijk, "Squarified Treemaps"
-#   (but not using their pseudocode)
 
 pad_rectangle = function(rect) {
   if (rect$dx > 2) {
@@ -17,10 +16,6 @@ pad_rectangle = function(rect) {
 }
 
 layoutrow = function(sizes, x, y, dx, dy) {
-  # generate rects for each size in sizes
-  # dx >= dy
-  # they will fill up height dy, and width will be determined by their area
-  # sizes should be pre-normalized wrt dx * dy (i.e., they should be same units)
   covered_area = sum(sizes)
   width = covered_area / dy
   rects = list()
@@ -32,10 +27,6 @@ layoutrow = function(sizes, x, y, dx, dy) {
 }
 
 layoutcol = function(sizes, x, y, dx, dy) {
-  # generate rects for each size in sizes
-  # dx < dy
-  # they will fill up width dx, and height will be determined by their area
-  # sizes should be pre-normalized wrt dx * dy (i.e., they should be same units)
   covered_area = sum(sizes)
   height = covered_area / dx
   rects = list()
@@ -55,7 +46,6 @@ layoutMain = function(sizes, x, y, dx, dy) {
 }
 
 leftoverrow = function(sizes, x, y, dx, dy) {
-  # compute remaining area when dx >= dy
   covered_area = sum(sizes)
   width = covered_area / dy
   leftover_x = x + width
@@ -66,7 +56,6 @@ leftoverrow = function(sizes, x, y, dx, dy) {
 }
 
 leftovercol = function(sizes, x, y, dx, dy) {
-  # compute remaining area when dx >= dy
   covered_area = sum(sizes)
   height = covered_area / dx
   leftover_x = x
@@ -102,7 +91,6 @@ squarify_main = function(sizes, x, y, dx, dy) {
     return(layoutMain(sizes, x, y, dx, dy))
   }
 
-  # figure out where 'split' should be
   i = 1
   while (i < length(sizes) && worst_ratio(sizes[1:i], x, y, dx, dy) >= worst_ratio(sizes[1:(i + 1)], x, y, dx, dy)) {
     i = i + 1
@@ -136,7 +124,7 @@ normalize_sizes = function(sizes, dx, dy) {
 
 #' Treemap in base R
 #' @details Plot treemaps in base R
-#' This function is a direct transpiled python [squarify](https://github.com/laserson/squarify) package by [Uri Laserson](https://github.com/laserson)
+#' This function is a direct transpilation of python [squarify](https://github.com/laserson/squarify) package by [Uri Laserson](https://github.com/laserson)
 #' @param X numeric vectors of values
 #' @param labels a character vector specifying the text to be written for each value in X. Default NULL.
 #' @param sub_labels a character vector specifying the sub-text to be written for each value in X. Default NULL.
@@ -154,7 +142,7 @@ normalize_sizes = function(sizes, dx, dy) {
 #' @importFrom graphics rect text
 #' @importFrom grDevices hcl.colors
 #' @examples
-#' gdp <- system.file("extdata", "G7_vs_BRCIS_GDP.tsv", package = "squarify")
+#' gdp <- system.file("extdata", "G7_vs_BRCIS_GDP.tsv", package = "squaRify")
 #' gdp = read.delim(file = gdp)
 #' g7 = subset(gdp, consortium == "G7")
 #' squarify(X = g7$GDP_T, labels = g7$country)

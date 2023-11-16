@@ -19,13 +19,13 @@ remotes::install_github(repo = "poisonalien/squaRify")
 ## Usage
 
 ```R
-library(squrify)
+library(squaRify)
 
 #example data (GDP of G7 countries - in trillions)
 gdp = c(26.85, 4.41, 4.30, 3.15, 2.92, 2.17, 2.09)
 gdp_countries = c("U.S.", "Japan", "Germany", "UK", "France", "Italy", "Canada")
 
-squarify::squarify(X = gdp, labels = gdp_countries)
+squaRify::squarify(X = gdp, labels = gdp_countries)
 ```
 
 ![](https://github.com/PoisonAlien/trackplot/assets/8164062/e21282fe-2820-481d-8a9f-b3024806b040)
@@ -41,7 +41,7 @@ brics = c(19.37, 3.73, 2.08, 2.06, 0.39)
 gbrics_countries = c("China", "India", "Brazil", "Russia", "SA")
 
 par(mfrow = c(1, 2), mar = c(0, 0, 3, 0))
-squarify::squarify(
+squaRify::squarify(
   X = g7,
   labels = g7_countries,
   col = "#273c75",
