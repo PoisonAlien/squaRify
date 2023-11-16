@@ -138,7 +138,8 @@ normalize_sizes = function(sizes, dx, dy) {
 #' @details Plot treemaps in base R
 #' This function is a direct transpiled python [squarify](https://github.com/laserson/squarify) package by [Uri Laserson](https://github.com/laserson)
 #' @param X numeric vectors of values
-#' @param lables a character vector specifying the text to be written for each value in X
+#' @param labels a character vector specifying the text to be written for each value in X. Default NULL.
+#' @param sub_labels a character vector specifying the sub-text to be written for each value in X. Default NULL.
 #' @param fontSize numeric character expansion factor. Default 1
 #' @param col colors. If colors is longer than x, the coordinates are recycled to the length of labels.
 #' @param alpha Default 1
@@ -146,6 +147,9 @@ normalize_sizes = function(sizes, dx, dy) {
 #' @param show_pct Default FALSE.
 #' @param text_col Default #2c3e50
 #' @param sub_text_col Default #34495e
+#' @param borderCol Default NULL
+#' @param text_font Font type. Default 1. Can be 1, 2 (bold), 3 (italic), 4 (bold-italic)
+#' @param sub_text_font Font type. Default 1. Can be 1, 2 (bold), 3 (italic), 4 (bold-italic)
 #' @export
 #' @importFrom graphics rect text
 #' @importFrom grDevices hcl.colors
@@ -153,9 +157,11 @@ normalize_sizes = function(sizes, dx, dy) {
 #' gdp <- system.file("extdata", "G7_vs_BRCIS_GDP.tsv", package = "squarify")
 #' gdp = read.delim(file = gdp)
 #' g7 = subset(gdp, consortium == "G7")
-#' squarify(X = g7$GDP_T, lables = g7$country)
+#' squarify(X = g7$GDP_T, labels = g7$country)
 
-squarify = function(X, lables, fontSize = 1, col = NA, alpha = 1, show_val = TRUE, show_pct = FALSE, text_col = "#2c3e50", sub_text_col = "#34495e"){
+squarify = function(X, labels = NULL, sub_labels = NULL, fontSize = 1, col = NULL, alpha = 1, show_val = TRUE,
+                    show_pct = FALSE, text_col = "#2c3e50", sub_text_col = "#34495e",
+                    borderCol = NULL, text_font = 1, sub_text_font = 1){
   x <- 0  # X-coordinate of the origin
   y <- 0  # Y-coordinate of the origin
   dx <- 100  # Full width of the treemap
@@ -163,8 +169,18 @@ squarify = function(X, lables, fontSize = 1, col = NA, alpha = 1, show_val = TRU
 
   sizes_norm <- X / sum(X) * dx * dy  # Normalize the sizes
 
-  if(is.na(col)){
+  if(is.null(col)){
     col = hcl.colors(n = length(X), palette = "Dark2")
+  }else if(length(col) != length(X)){
+    col = rep(col, length(X))
+  }
+
+  if(length(text_col) != length(X)){
+    text_col = rep(text_col, length(X))
+  }
+
+  if(length(sub_text_col) != length(X)){
+    sub_text_col = rep(sub_text_col, length(X))
   }
 
   col = grDevices::adjustcolor(col = col, alpha.f = alpha)
@@ -174,8 +190,8 @@ squarify = function(X, lables, fontSize = 1, col = NA, alpha = 1, show_val = TRU
 
 
   # Function to draw a rectangle
-  draw_rect <- function(x, y, dx, dy, col) {
-    rect(x, y, x + dx, y + dy, col = col, border = "#34495e")
+  draw_rect <- function(x, y, dx, dy, col, ...) {
+    rect(x, y, x + dx, y + dy, col = col, ...)
   }
 
   # Function to draw text inside the rectangle
@@ -187,22 +203,29 @@ squarify = function(X, lables, fontSize = 1, col = NA, alpha = 1, show_val = TRU
     text(x + dx/2, y + dy / 2, label, cex = fs * 0.8, pos = 1, xpd = TRUE, ...)
   }
 
+  if(is.null(labels)){
+    labels = seq_along(X)
+  }
 
   plot(NA, xlim = c(0, dx), ylim = c(0, dy), xlab = "", ylab = "", xaxt = "n", yaxt = "n", frame.plot = FALSE)
 
-  if(show_pct){
-    sub_text = paste0(X,  " [", round(X/sum(X) * 100, 2), "%]")
-  }else{
+  if(is.null(sub_labels)){
     sub_text = paste0(X)
+  }else{
+    sub_text = sub_labels
+  }
+
+  if(show_pct){
+    sub_text = paste0(sub_text,  " [", round(X/sum(X) * 100, 2), "%]")
   }
 
   #print(rectangles)
   for (i in seq_along(rectangles)) {
     rect_info <- rectangles[[i]]
-    draw_rect(rect_info$x, rect_info$y, rect_info$dx, rect_info$dy, col[i])
-    draw_text(rect_info$x, rect_info$y, rect_info$dx, rect_info$dy, lables[i], fs = fontSize, col = text_col) # Use original sizes
+    draw_rect(rect_info$x, rect_info$y, rect_info$dx, rect_info$dy, col[i], border = borderCol)
+    draw_text(rect_info$x, rect_info$y, rect_info$dx, rect_info$dy, labels[i], fs = fontSize, col = text_col[i], font = text_font) # Use original sizes
     if(show_val){
-      draw_text_sub(rect_info$x, rect_info$y, rect_info$dx, rect_info$dy, sub_text[i], fs = fontSize, col = sub_text_col) # Use original sizes
+      draw_text_sub(rect_info$x, rect_info$y, rect_info$dx, rect_info$dy, sub_text[i], fs = fontSize, col = sub_text_col[i], font = sub_text_font) # Use original sizes
     }
   }
 }
